@@ -10,6 +10,8 @@ app.get("/", (req, res)=>{
     res.json({message: "Hello World!"});
 });
 
+require("./app/routes/customer.routes.js")(app);
+
 // 포트넘버 설정
 app.listen(3000, ()=>{
     console.log("Server is running on port 3000.");
