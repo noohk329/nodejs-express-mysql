@@ -22,24 +22,24 @@ Customer.create = (newCustomer, result)=>{
 };
 
 // customer id로 조회
-Customer.findByID = (customerID, result)=>{
-    sql.query('SELECT * FROM customers WHERE id = ?',customerID, (err, res)=>{
-        if(err){
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        }
-
-        if(res.length){
-            console.log("found customer: ", res[0]);
-            result(null, res[0]);
-            return;
-        }
-
-        // 결과가 없을 시 
-        result({kind: "not_found"}, null);
+Customer.findById = (customerId, result) => {
+    sql.query(`SELECT * FROM customers WHERE id = ${customerId}`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+  
+      if (res.length) {
+        console.log("found customer: ", res[0]);
+        result(null, res[0]);
+        return;
+      }
+  
+      // not found Customer with the id
+      result({ kind: "not_found" }, null);
     });
-};
+  };
 
 // customer 전체 조회
 Customer.getAll = result =>{
@@ -56,25 +56,28 @@ Customer.getAll = result =>{
 };
 
 // customer id로 수정
-Customer.updateByID = (id, customer, result)=>{
-    sql.query('UPDATE customers SET email = ?, name = ?, active = ? WHERE id = ?', 
-    [customer.email, customer.name, customer.active, id], (err, res)=>{
-        if(err){
-            console.log("error: ", err);
-            result(err, null);
-            return;
+Customer.updateById = (id, customer, result) => {
+    sql.query(
+      "UPDATE customers SET email = ?, name = ?, active = ? WHERE id = ?",
+      [customer.email, customer.name, customer.active, id],
+      (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(null, err);
+          return;
         }
-
-        if(res.affectedRows ==0){
-            // id 결과가 없을 시 
-            result({kind: "not_found"}, null);
-            return;
+  
+        if (res.affectedRows == 0) {
+          // not found Customer with the id
+          result({ kind: "not_found" }, null);
+          return;
         }
-
-        console.log("update customer: ", {id:id, ... customer});
-        result(null, {id:id, ...customer});
-    });
-};
+  
+        console.log("updated customer: ", { id: id, ...customer });
+        result(null, { id: id, ...customer });
+      }
+    );
+  };
 
 // customer id로 삭제
 Customer.remove = (id, result)=>{
@@ -111,7 +114,7 @@ Customer.removeAll = result =>{
             return;
         }
 
-        console.log('deleted ${res.affectedRows} customers');
+        console.log(`deleted ${res.affectedRows} customers`);
         result(null, res);
     });
 };
